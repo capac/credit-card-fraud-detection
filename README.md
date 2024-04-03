@@ -6,11 +6,11 @@ This is a machine learning project for determining fraud cases in card payment t
 
 'merchantZip' contains 3260 unique categories, 19.4% of which are missing values. That figure increases to 31.6% if you include all of the entries marked as '0'. The remaining, unique 'merchantZip' codes all figure below 1%, so also due to the high fragmentation I decided to drop this feature.
 
- In the analysis I decided to convert 'eventId', 'accountNumber', 'merchantId', 'mcc', 'merchantCountry', 'merchantZip', 'posEntryMode' to string data type, because 'DictVectorizer' will only do a binary one-hot encoding when feature values are of type string. 'transactionTime' is set as a datetime type, while 'transactionAmount' and 'availableCash' are the only two numerical data types.
+In the analysis I decided to convert 'eventId', 'accountNumber', 'merchantId', 'mcc', 'merchantCountry', 'merchantZip', 'posEntryMode' to string data type, because 'DictVectorizer' will only do a binary one-hot encoding when feature values are of type string. 'transactionTime' is set as a datetime type, while 'transactionAmount' and 'availableCash' are the only two numerical data types.
 
  ## Exploratory data analysis
 
-The exploratory data analysis plots show the frequency of some fraudulent entries of the category features that have suspicious behaviors and that warrant more attention. For example, many of the fradulent transactions are below £10. The frequency of one fradulent merchant code (5735) is particularly high (almost 120 out of 875 fradulent transactions). In particular, the merchant account '8b9c15ea' stands out as one account aimed by fraudsters.
+The exploratory data analysis plots show the frequency of some fraudulent entries of the category features that have suspicious behaviors and that warrant more attention. For example, many of the fradulent transactions are small in amount. The frequency of one fradulent merchant code (5735) is particularly high (almost 120 out of 875 fradulent transactions). In particular, the merchant account '8b9c15ea' stands out as one account aimed by fraudsters.
  
 Three fradulent country codes particularly stand out (826, 840, 442), while the merchant code most targeted by fraudsters is '0'. However, this may not be that informative as many ZIP codes in the US start with '0'.
 
@@ -18,4 +18,6 @@ Just from exploratory data analysis one can see that fradulent POS entry codes a
 
 On the string data types, I calculate the [mutual information score from Scikit-Learn](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mutual_info_score.html#sklearn.metrics.mutual_info_score) against the fraud case target. I also calcualted the Pearson correlation for 'transactionAmount' and 'availableCash'.
 
-I used the 'RandomUnderSampler' class from imbalanced-learn to under-sample the majority class. Since in my dataset 875 cases are fradulent, the class randomly selects 875 non-fraud cases to build a machine learning algorithm on a balanced dataset. I test the the balanced dataset on three machin learning algorithms: logistic regression, decision tree classifier and random forest classifier. All three are calculated on the balanced dataset, with the logistic regression obtaining the best balanced accuracy score. The balanced accuracy score is the mean of the recall of the two target classes.
+## Modeling
+
+I used the 'RandomUnderSampler' class from imbalanced-learn to under-sample the majority class. Since in my dataset 875 cases are fradulent, the class randomly selects 875 non-fraud cases to build a machine learning algorithm on a balanced dataset. I test the the balanced dataset on three maching learning algorithms: logistic regression, decision tree classifier and random forest classifier. All three are calculated on the balanced dataset, with the logistic regression obtaining the best balanced accuracy score. The balanced accuracy score is defined as the mean of the recall of the two target classes.
