@@ -26,11 +26,11 @@ data_df[['eventId', 'accountNumber',
                                      'merchantCountry', 'merchantZip',
                                      'posEntryMode']].astype('string')
 
-print('Information on data_df dataframe')
-print(data_df.info())
-print('\n')
-print(data_df.describe())
-print('\n')
+# print('Information on data_df dataframe')
+# print(data_df.info())
+# print('\n')
+# print(data_df.describe())
+# print('\n')
 print('Number of unique entries: ')
 print(f'{data_df.nunique().sort_values(ascending=False)}')
 print('\n')
@@ -45,7 +45,6 @@ print('\n')
 print('''Percentage of NAs and 0s in 'merchantZip':''')
 print(f'''{round(100*((data_df.merchantZip == '0').sum() +
                       data_df.merchantZip.isna().sum())/len(data_df), 2)}%.''')
-
 print('''Made decision to drop 'merchantZip' column.''')
 data_df.drop('merchantZip', axis=1, inplace=True)
 
@@ -53,14 +52,13 @@ data_path = Path().cwd() / 'data'
 labels_df = pd.read_csv(data_path / 'labels_obf.csv',
                         parse_dates=['reportedTime'])
 labels_df.sort_values(by='reportedTime', inplace=True)
-print('\n')
-print('Information on labels_df dataframe')
-print(labels_df.info())
-print('\n')
+# print('\n')
+# print('Information on labels_df dataframe')
+# print(labels_df.info())
+# print('\n')
 print(f'Number of unique entries in labels dataset:\n{labels_df.nunique()}')
 
 data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId).astype(bool)
-print('\n')
 neg, pos = np.bincount(data_df['fraudCase'])
 total = neg + pos
 print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(
@@ -92,10 +90,11 @@ dicts = data_df[selected_list].to_dict(orient='records')
 dv = DictVectorizer(sparse=False)
 dicts_arr = dv.fit_transform(dicts)
 print(f'Shape of processed dataframe: {dicts_arr.shape}')
-
+print('\n')
 feature_names_list = dv.get_feature_names_out(selected_list)
 processed_df = pd.DataFrame(dicts_arr, columns=feature_names_list)
 print('Data split into training and testing data.')
+print('\n')
 X = processed_df
 y = data_df['fraudCase']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
@@ -106,6 +105,7 @@ processed_categorical_list = \
     set(feature_names_list) - set(['transactionAmount', 'availableCash'])
 
 print('Modeling data on logistic regression, decision tree and random forest:')
+print('\n')
 model_dict = {'logistic regression': LogisticRegression(random_state=0,
                                                         max_iter=4000),
               'decision tree': DecisionTreeClassifier(max_depth=6,
