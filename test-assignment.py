@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from collections import Counter
 from sklearn.metrics import mutual_info_score
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.model_selection import train_test_split
@@ -103,15 +102,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
                                                     stratify=y,
                                                     random_state=42)
 
-print('\n')
-print('Ratio of non-fraud (False )and fraud (True) cases:')
-print({key: round(value / len(y), 4) for key, value in Counter(y).items()})
-print('\n')
-
 processed_categorical_list = \
     set(feature_names_list) - set(['transactionAmount', 'availableCash'])
 
-print('Modelling data on logistic regression, decision tree and random forest')
+print('Modeling data on logistic regression, decision tree and random forest:')
 model_dict = {'logistic regression': LogisticRegression(random_state=0,
                                                         max_iter=4000),
               'decision tree': DecisionTreeClassifier(max_depth=6,
@@ -122,18 +116,18 @@ model_dict = {'logistic regression': LogisticRegression(random_state=0,
                                                       n_estimators=150)}
 
 for name, model in model_dict.items():
-    pipeline_ = make_pipeline(RandomUnderSampler(random_state=0), model)
-    cv_results_from_pipeline_ = cross_validate(pipeline_, X_train, y_train,
-                                               scoring="balanced_accuracy",
-                                               return_train_score=True,
-                                               return_estimator=True,
-                                               n_jobs=-1,
-                                               error_score='raise')
+    pipeline = make_pipeline(RandomUnderSampler(random_state=0), model)
+    cv_results = cross_validate(pipeline, X_train, y_train,
+                                scoring="balanced_accuracy",
+                                return_train_score=True,
+                                return_estimator=True,
+                                n_jobs=-1,
+                                error_score='raise')
     print(f"Balanced accuracy mean +/- std. dev. for {name}: "
-          f"{cv_results_from_pipeline_['test_score'].mean():.3f} +/- "
-          f"{cv_results_from_pipeline_['test_score'].std():.3f}")
+          f"{cv_results['test_score'].mean():.3f} +/- "
+          f"{cv_results['test_score'].std():.3f}")
     scores = []
-    for fold_id, cv_model in enumerate(cv_results_from_pipeline_["estimator"]):
+    for fold_id, cv_model in enumerate(cv_results["estimator"]):
         scores.append(balanced_accuracy_score(y_test,
                                               cv_model.predict(X_test)))
     print(f"Balanced accuracy mean +/- std. dev. for {name} on test dataset: "
