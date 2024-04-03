@@ -27,6 +27,7 @@ data_df[['eventId', 'accountNumber',
                                      'merchantCountry', 'merchantZip',
                                      'posEntryMode']].astype('string')
 
+print('Information on data_df dataframe')
 print(data_df.info())
 print('\n')
 print(data_df.describe())
@@ -46,6 +47,7 @@ print('''Percentage of NAs and 0s in 'merchantZip':''')
 print(f'''{round(100*((data_df.merchantZip == '0').sum() +
                       data_df.merchantZip.isna().sum())/len(data_df), 2)}%.''')
 
+print('''Made decision to drop 'merchantZip' column.''')
 data_df.drop('merchantZip', axis=1, inplace=True)
 
 data_path = Path().cwd() / 'data'
@@ -53,6 +55,7 @@ labels_df = pd.read_csv(data_path / 'labels_obf.csv',
                         parse_dates=['reportedTime'])
 labels_df.sort_values(by='reportedTime', inplace=True)
 print('\n')
+print('Information on labels_df dataframe')
 print(labels_df.info())
 print('\n')
 print(f'Number of unique entries in labels dataset:\n{labels_df.nunique()}')
@@ -79,10 +82,12 @@ print('\n')
 corr_df = data_df[numerical_list].corr()
 print(f'Correlation matrix of numerical features:\n{corr_df}')
 print('\n')
+print('''Dropped 'eventId', 'transactionTime' and 'merchantId'.''')
 data_df.drop(['eventId', 'transactionTime', 'merchantId'],
              axis=1, inplace=True)
 categorical_list = list(data_df.select_dtypes('string'))
 
+print('''One-hot encoding with 'DictVectorizer' class''')
 selected_list = categorical_list + numerical_list
 dicts = data_df[selected_list].to_dict(orient='records')
 dv = DictVectorizer(sparse=False)
@@ -90,23 +95,23 @@ dicts_arr = dv.fit_transform(dicts)
 print(f'Shape of processed dataframe: {dicts_arr.shape}')
 
 feature_names_list = dv.get_feature_names_out(selected_list)
-
 processed_df = pd.DataFrame(dicts_arr, columns=feature_names_list)
-
-y = data_df['fraudCase']
+print('Data split into training and testing data.')
 X = processed_df
+y = data_df['fraudCase']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
                                                     stratify=y,
                                                     random_state=42)
 
 print('\n')
-print('Ratio of non-fraud and fraud cases:')
+print('Ratio of non-fraud (False )and fraud (True) cases:')
 print({key: round(value / len(y), 4) for key, value in Counter(y).items()})
 print('\n')
 
 processed_categorical_list = \
     set(feature_names_list) - set(['transactionAmount', 'availableCash'])
 
+print('Modelling data on logistic regression, decision tree and random forest')
 model_dict = {'logistic regression': LogisticRegression(random_state=0,
                                                         max_iter=4000),
               'decision tree': DecisionTreeClassifier(max_depth=6,
