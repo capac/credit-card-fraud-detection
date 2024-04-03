@@ -28,20 +28,20 @@ data_df[['eventId', 'accountNumber',
                                      'posEntryMode']].astype('string')
 
 print(data_df.info())
-
+print('\n')
 print(data_df.describe())
-
+print('\n')
 print('Number of unique entries: ')
 print(f'{data_df.nunique().sort_values(ascending=False)}')
-
+print('\n')
 print(f'Number of missing values:\n{data_df.isnull().sum()}')
-
+print('\n')
 percent_missing = 100*data_df.isnull().sum()/data_df.shape[0]
 print(f'Percentage of missing values:\n{round(percent_missing, 1)}')
-
+print('\n')
 merchant_df = data_df.merchantZip.value_counts(dropna=False, normalize=True)
 print(f'Sorted list of normalized merchantZip codes:\n{merchant_df[:10]}')
-
+print('\n')
 print('''Percentage of NAs and 0s in 'merchantZip':''')
 print(f'''{round(100*((data_df.merchantZip == '0').sum() +
                       data_df.merchantZip.isna().sum())/len(data_df), 2)}%.''')
@@ -52,13 +52,13 @@ data_path = Path().cwd() / 'data'
 labels_df = pd.read_csv(data_path / 'labels_obf.csv',
                         parse_dates=['reportedTime'])
 labels_df.sort_values(by='reportedTime', inplace=True)
-
+print('\n')
 print(labels_df.info())
-
+print('\n')
 print(f'Number of unique entries in labels dataset:\n{labels_df.nunique()}')
 
 data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId).astype(bool)
-
+print('\n')
 neg, pos = np.bincount(data_df['fraudCase'])
 total = neg + pos
 print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(
@@ -75,10 +75,10 @@ numerical_list = list(data_df.select_dtypes('number'))
 print('Mutual information score:')
 mutual_df = data_df[categorical_list].apply(mutual_info)
 print(f'{mutual_df.sort_values(ascending=False)}')
-
+print('\n')
 corr_df = data_df[numerical_list].corr()
 print(f'Correlation matrix of numerical features:\n{corr_df}')
-
+print('\n')
 data_df.drop(['eventId', 'transactionTime', 'merchantId'],
              axis=1, inplace=True)
 categorical_list = list(data_df.select_dtypes('string'))
@@ -99,9 +99,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
                                                     stratify=y,
                                                     random_state=42)
 
+print('\n')
 print('Ratio of non-fraud and fraud cases:')
 print({key: round(value / len(y), 4) for key, value in Counter(y).items()})
-
+print('\n')
 
 processed_categorical_list = \
     set(feature_names_list) - set(['transactionAmount', 'availableCash'])
