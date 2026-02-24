@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -12,7 +15,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-data_path = Path().cwd() / 'data'
+home_dir = Path.home()
+data_path = home_dir / 'Programming/data/fraud-detection' / 'data'
 data_df = pd.read_csv(data_path / 'transactions_obf.csv',
                       parse_dates=['transactionTime'],
                       dtype={'availableCash': np.float64,
@@ -48,7 +52,6 @@ print(f'''{round(100*((data_df.merchantZip == '0').sum() +
 print('''Made decision to drop 'merchantZip' column.''')
 data_df.drop('merchantZip', axis=1, inplace=True)
 
-data_path = Path().cwd() / 'data'
 labels_df = pd.read_csv(data_path / 'labels_obf.csv',
                         parse_dates=['reportedTime'])
 labels_df.sort_values(by='reportedTime', inplace=True)
@@ -97,12 +100,13 @@ print('Data split into training and testing data.')
 print('\n')
 X = processed_df
 y = data_df['fraudCase']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
-                                                    stratify=y,
-                                                    random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=y, random_state=42
+    )
 
-processed_categorical_list = \
+processed_categorical_list = (
     set(feature_names_list) - set(['transactionAmount', 'availableCash'])
+    )
 
 print('Modeling data on logistic regression, decision tree and random forest:')
 print('\n')
@@ -123,13 +127,13 @@ for name, model in model_dict.items():
                                 return_estimator=True,
                                 n_jobs=-1,
                                 error_score='raise')
-    print(f"Balanced accuracy mean +/- std. dev. for {name}: "
-          f"{cv_results['test_score'].mean():.3f} +/- "
+    print(f"Balanced accuracy mean ± std. dev. for {name}: "
+          f"{cv_results['test_score'].mean():.3f} ± "
           f"{cv_results['test_score'].std():.3f}")
     scores = []
     for fold_id, cv_model in enumerate(cv_results["estimator"]):
         scores.append(balanced_accuracy_score(y_test,
                                               cv_model.predict(X_test)))
-    print(f"Balanced accuracy mean +/- std. dev. for {name} on test dataset: "
-          f"{np.mean(scores):.3f} +/- {np.std(scores):.3f}"
+    print(f"Balanced accuracy mean ± std. dev. for {name} on test dataset: "
+          f"{np.mean(scores):.3f} ± {np.std(scores):.3f}"
           f"\n")
