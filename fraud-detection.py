@@ -105,10 +105,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, stratify=y, random_state=42
     )
 
-print(
-    'Modeling data on logistic regression, decision tree, '
-    'random forest and histogram gradient boosting:\n'
-    )
 model_dict = {
     'logistic regression': LogisticRegression(max_iter=3000, random_state=0),
     'decision tree': DecisionTreeClassifier(max_depth=6, random_state=0),
@@ -119,6 +115,9 @@ model_dict = {
         max_depth=8, max_iter=400, random_state=0
         ),
     }
+
+list_of_models = list(model_dict.keys())
+print(f'Modeling data on {str(list_of_models)[1:-1]}:\n')
 
 for name, model in model_dict.items():
     pipeline = make_pipeline(
