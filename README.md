@@ -2,11 +2,13 @@
 
 ## Introduction
 
-This is a machine learning project for determining fraud cases in card payment transactions. More specifically, it is a binary classification problem where the target feature is the 'fraudCase' column, with label 1 for fraud cases and 0 otherwise. Only an extremely tiny percentage of cases are fraudulent, precisely 0.74% of all transactions.
+Fraudulent payment transactions are of very grave concern for banking institutions, due to the financial losses and customer distrust they can potentially cause. Using one year's worth of card payment transactions with fraudent transactions appropriately flagged, the goal of this project is to produce a machine learning model that can predict fraudulent payment transactions. Moreover, due to the limited banking capacities, only 400 transactions per month can be investigated for fraud. After model generation and bootstrap simulation, a machine learing model was found to produce an average 24% fraud detection rate over an average 4% fraud detection by random transaction selection, producing a 6x improvement.
 
 ## Data preparation
 
-'merchantZip' contains 3260 unique categories, 19.4% of which are missing values. That figure increases to 31.6% if you include all of the entries marked as '0'. The remaining, unique 'merchantZip' codes all figure below 1%, so also due to the high fragmentation I decided to drop this feature.
+The data set contains 118621 transactions of which only 874 are fraudulent, precisely 0.74% of all transactions.
+
+'merchantZip' contains 3260 unique categories, 19.4% of which are missing values, which increases to 31.6% if you include all of the entries marked as '0'. The remaining, unique 'merchantZip' codes all figure below 1%.
 
 In the analysis I decided to convert 'eventId', 'accountNumber', 'merchantId', 'mcc', 'merchantCountry', 'merchantZip', 'posEntryMode' to string data type, because 'DictVectorizer' will only do a binary one-hot encoding when feature values are of type string. However, 'eventId' and 'merchantId' are dropped from the dataset due to the high amount of unique values which doesn't offer any discrimination. 'transactionTime' is set as a datetime type but also dropped from the dataset. 'transactionAmount' and 'availableCash' are the only two numerical data types and are kept.
 
