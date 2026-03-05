@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Fraudulent payment transactions are of very grave concern for banking institutions, due to the financial losses and customer distrust they can potentially cause. Using one year's worth of card payment transactions with fraudent transactions appropriately flagged, the goal of this project is to produce a machine learning model that can predict fraudulent payment transactions. Moreover, due to the limited banking capacities, only 400 transactions per month can be investigated for fraud. After model generation and bootstrap simulation, a machine learing model was found to produce an average 24% fraud detection rate over an average 4% fraud detection by random transaction selection, producing a 6x improvement.
+Fraudulent payment transactions are of very grave concern for banking institutions, due to the financial losses and customer distrust they can potentially cause. Using one year's worth of card payment transactions, with fraudent transactions appropriately flagged, the goal of this project is to produce a machine learning model that can predict fraudulent payment transactions. Moreover, due to the limited banking capacities, only 400 transactions per month can be investigated for fraud. After model generation and bootstrap simulation, a machine learing model was found to produce an average of 23.9% fraud detection rate over an average of just above 4.2% fraud detection rate by random transaction selection, producing a 5.6x improvement.
 
 ## Data preparation
 
-The data set contains 118621 transactions of which only 874 are fraudulent, precisely 0.74% of all transactions.
+The data set contains 118621 transactions of which 117746 are non-fraudulent transactions (99.26% of total) and 875 are fraudulent transactions (0.74% of total). The total number of accounts are 766, of which those subject to fraud are 167. Even though the percentage of fraud per transaction is small, fraud cases affect 21.8% of accounts. The percentage of accounts with less than £1000 of fraud is 83.23%.
 
 'merchantZip' contains 3260 unique categories, 19.4% of which are missing values, which increases to 31.6% if you include all of the entries marked as '0'. The remaining, unique 'merchantZip' codes all figure below 1%.
 
