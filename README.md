@@ -8,9 +8,11 @@ Fraudulent payment transactions are of very grave concern for banking institutio
 
 The data set contains 118621 transactions of which 117746 are non-fraudulent transactions (99.26% of total) and 875 are fraudulent transactions (0.74% of total). The total number of accounts are 766, of which those subject to fraud are 167. Even though the percentage of fraud per transaction is small, fraud cases affect 21.8% of accounts. The percentage of accounts with less than £1000 of fraud is 83.23%.
 
-'merchantZip' contains 3260 unique categories, 19.4% of which are missing values, which increases to 31.6% if you include all of the entries marked as '0'. The remaining, unique 'merchantZip' codes all figure below 1%.
+'merchantZip' contains 3260 unique categories, 19.4% of which are missing values, which increases to 31.6% if you include all of the entries marked as '0'. Both these values are labeled simply as 'Unknown' and kept in the data set. The remaining, unique 'merchantZip' codes all figure below 1%.
 
-In the analysis I decided to convert 'eventId', 'accountNumber', 'merchantId', 'mcc', 'merchantCountry', 'merchantZip', 'posEntryMode' to string data type, because 'DictVectorizer' will only do a binary one-hot encoding when feature values are of type string. However, 'eventId' and 'merchantId' are dropped from the dataset due to the high amount of unique values which doesn't offer any discrimination. 'transactionTime' is set as a datetime type but also dropped from the dataset. 'transactionAmount' and 'availableCash' are the only two numerical data types and are kept.
+The most common values in 'posEntryMode' are '5', '81' and '1', present in 59.25, 30.2% and 8.9%, with the remaining below 1%.
+
+In the analysis I decided to convert 'eventId', 'accountNumber', 'merchantId', 'mcc', 'merchantCountry', 'merchantZip', 'posEntryMode' to string data type, because 'DictVectorizer' will only do a binary one-hot encoding when feature values are of type string. However, 'eventId' and 'merchantId' are dropped from the dataset due to the high amount of unique values which doesn't offer any discrimination. I've calculated the mutual information score for these string data types, but there are low values for each of these features suggesting a low correlation between one another. 'transactionTime' is set as a datetime type but also dropped from the dataset. 'transactionAmount' and 'availableCash' are the only two numerical data types and are kept.
 
 ## Exploratory data analysis
 
