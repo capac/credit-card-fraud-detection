@@ -264,8 +264,8 @@ class CrossValidationCheck():
         y_sel = self.y_val.iloc[index_selected_trans]
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_val)
 
-        print(f'Model fraud detection rate on test set '
-              f'using cross validation: '
+        print(f'Model fraud detection rate using the complete '
+              f'resampled data set: '
               f'{np.round(self.percent_frauds, 2)}%')
 
 
