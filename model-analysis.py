@@ -13,7 +13,10 @@ from sklearn.ensemble import (
     )
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import (
+    balanced_accuracy_score,
+    recall_score
+    )
 from sklearn.model_selection import (
     train_test_split,
     cross_validate,
@@ -186,18 +189,26 @@ class ModelOverRandomDetection():
         self.percent_frauds_control = []
 
         # test set
-        fraud_prob = self.pipeline.predict_proba(self.X_test)[:, 1]
-        ps = fraud_prob.argsort()
+        y_score = self.pipeline.predict_proba(self.X_test)[:, 1]
+        ps = y_score.argsort()
         index_selected_trans = ps[-self.num_transaction_checks:]
         y_sel = self.y_test.iloc[index_selected_trans]
+        # print(f'len(y_sel): {len(y_sel)}')
+        # print(f'sum(y_sel): {sum(y_sel)}')
+        # print(f'len(self.y_test): {len(self.y_test)}')
+        # print(f'sum(self.y_test): {sum(self.y_test)}')
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_test)
         print(f'Model fraud detection rate on test set '
               f'using the 400 most-likely detections: '
               f'{np.round(self.percent_frauds, 2)}%')
-        y_pred = self.pipeline.predict(self.X_test)
-        mdl_ba_score = balanced_accuracy_score(y_pred, self.y_test)
+        y_threshold = np.sort(y_score)[-self.num_transaction_checks]
+        y_pred = (y_score >= y_threshold).astype(int)
+        mdl_ba_score = balanced_accuracy_score(self.y_test, y_pred)
         print(f'Balanced accuracy score on test set: '
               f'{np.round(100*mdl_ba_score, 2)}%')
+        recall = recall_score(self.y_test, y_pred, pos_label=1)
+        print(f'Recall score on test set: '
+              f'{np.round(100*recall, 2)}%')
 
         # control on random selection
         for n_tests in range(self.num_bootstrapped_cases):
@@ -260,8 +271,8 @@ class CrossValidationCheck():
         pipeline.fit(self.X_train, self.y_train)
 
         # test set
-        fraud_prob = pipeline.predict_proba(self.X_val)[:, 1]
-        ps = fraud_prob.argsort()
+        y_score = pipeline.predict_proba(self.X_val)[:, 1]
+        ps = y_score.argsort()
         index_selected_trans = ps[-self.num_transaction_checks:]
         y_sel = self.y_val.iloc[index_selected_trans]
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_val)
@@ -270,10 +281,14 @@ class CrossValidationCheck():
               f'using the 400 most-likely detections: '
               f'{np.round(self.percent_frauds, 2)}%')
 
-        y_pred = pipeline.predict(self.X_val)
-        mdl_ba_score = balanced_accuracy_score(y_pred, self.y_val)
+        y_threshold = np.sort(y_score)[-self.num_transaction_checks]
+        y_pred = (y_score >= y_threshold).astype(int)
+        mdl_ba_score = balanced_accuracy_score(self.y_val, y_pred)
         print(f'Balanced accuracy score on test set: '
               f'{np.round(100*mdl_ba_score, 2)}%')
+        recall = recall_score(self.y_val, y_pred, pos_label=1)
+        print(f'Recall score on test set: '
+              f'{np.round(100*recall, 2)}%')
 
 
 cvc = CrossValidationCheck(X_train_tts, X_test_tts, y_train_tts, y_test_tts)
