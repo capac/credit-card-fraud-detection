@@ -191,10 +191,11 @@ class ModelOverRandomDetection():
         index_selected_trans = ps[-self.num_transaction_checks:]
         y_sel = self.y_test.iloc[index_selected_trans]
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_test)
+        print(f'Model fraud detection rate on test set: '
+              f'{np.round(self.percent_frauds, 2)}%')
 
         # control on random selection
         for n_tests in range(self.num_bootstrapped_cases):
-
             rng = np.random.RandomState(seed=n_tests)
             shuffled_index = rng.permutation(np.arange(0, len(self.y_test)))
             selected_indexes = shuffled_index[:num_transaction_checks]
@@ -202,18 +203,13 @@ class ModelOverRandomDetection():
             sens = 100*np.sum(y_sel)/np.sum(self.y_test)
             self.percent_frauds_control.append(sens)
 
-        print(f'Average detection percentage across '
-              f'{self.num_bootstrapped_cases} bootstrapped datasets:\n')
-
-        print(f'Model fraud detection rate on test set: '
-              f'{np.round(self.percent_frauds, 2)}%')
-
         self.percent_frauds_control_mean = np.mean(self.percent_frauds_control)
-        print(f'Random fraud detection rate on test set: '
+        print(f'Average random fraud detection rate on '
+              f'{self.num_bootstrapped_cases} bootstrapped test sets: '
               f'{np.round(self.percent_frauds_control_mean, 2)}%')
 
         imp_ratio = self.percent_frauds/self.percent_frauds_control_mean
-        print(f'Improvement of model detection over random detection '
+        print(f'Improvement of model detection over average random detection '
               f'on test set: '
               f'{np.round(imp_ratio, 1)}x\n')
 
