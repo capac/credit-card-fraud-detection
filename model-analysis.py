@@ -198,7 +198,8 @@ class ModelOverRandomDetection():
             rng = np.random.RandomState(seed=n_tests)
             shuffled_index = rng.permutation(np.arange(0, len(self.y_test)))
             selected_indexes = shuffled_index[:num_transaction_checks]
-            sens = 100*sum(self.y_test.iloc[selected_indexes])/sum(self.y_test)
+            y_sel = self.y_test.iloc[selected_indexes]
+            sens = 100*np.sum(y_sel)/np.sum(self.y_test)
             self.percent_frauds_control.append(sens)
 
         print(f'Average detection percentage across '
