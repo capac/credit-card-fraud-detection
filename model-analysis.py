@@ -156,7 +156,7 @@ class DataSetEvaluation():
 
 
 validation_eval = DataSetEvaluation(X_train, X_val, y_train, y_val)
-validation_eval.cv_evaluate()
+# validation_eval.cv_evaluate()
 
 pipeline = make_pipeline(
     RandomUnderSampler(random_state=0),
@@ -191,8 +191,13 @@ class ModelOverRandomDetection():
         index_selected_trans = ps[-self.num_transaction_checks:]
         y_sel = self.y_test.iloc[index_selected_trans]
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_test)
-        print(f'Model fraud detection rate on test set: '
+        print(f'Model fraud detection rate on test set '
+              f'using the 400 most-likely detections: '
               f'{np.round(self.percent_frauds, 2)}%')
+        y_pred = self.pipeline.predict(self.X_test)
+        mdl_ba_score = balanced_accuracy_score(y_pred, self.y_test)
+        print(f'Balanced accuracy score on test set: '
+              f'{np.round(100*mdl_ba_score, 2)}%')
 
         # control on random selection
         for n_tests in range(self.num_bootstrapped_cases):
@@ -261,9 +266,14 @@ class CrossValidationCheck():
         y_sel = self.y_val.iloc[index_selected_trans]
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_val)
 
-        print(f'Model fraud detection rate using the complete '
-              f'resampled data set: '
+        print(f'Model fraud detection rate on test set '
+              f'using the 400 most-likely detections: '
               f'{np.round(self.percent_frauds, 2)}%')
+
+        y_pred = pipeline.predict(self.X_val)
+        mdl_ba_score = balanced_accuracy_score(y_pred, self.y_val)
+        print(f'Balanced accuracy score on test set: '
+              f'{np.round(100*mdl_ba_score, 2)}%')
 
 
 cvc = CrossValidationCheck(X_train_tts, X_test_tts, y_train_tts, y_test_tts)
