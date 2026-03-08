@@ -45,7 +45,7 @@ category_list = [
     ]
 data_df[category_list] = data_df[category_list].astype('string')
 labels_df['eventId'] = labels_df['eventId'].astype('string')
-data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId).astype(bool)
+data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId)
 data_df['merchantZip'] = data_df['merchantZip'].replace(
     {np.nan: 'Unknown', '0': 'Unknown'}
     )
@@ -190,9 +190,9 @@ class ModelOverRandomDetection():
 
         # test set
         y_score = self.pipeline.predict_proba(self.X_test)[:, 1]
-        ps = y_score.argsort()
-        index_selected_trans = ps[-self.num_transaction_checks:]
-        y_sel = self.y_test.iloc[index_selected_trans]
+        sorted_indexes = np.argsort(y_score)
+        selected_indexes = sorted_indexes[-self.num_transaction_checks:]
+        y_sel = self.y_test.iloc[selected_indexes]
         # print(f'len(y_sel): {len(y_sel)}')
         # print(f'sum(y_sel): {sum(y_sel)}')
         # print(f'len(self.y_test): {len(self.y_test)}')
@@ -272,9 +272,9 @@ class CrossValidationCheck():
 
         # test set
         y_score = pipeline.predict_proba(self.X_val)[:, 1]
-        ps = y_score.argsort()
-        index_selected_trans = ps[-self.num_transaction_checks:]
-        y_sel = self.y_val.iloc[index_selected_trans]
+        sorted_indexes = np.argsort(y_score)
+        selected_indexes = sorted_indexes[-self.num_transaction_checks:]
+        y_sel = self.y_val.iloc[selected_indexes]
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_val)
 
         print(f'Model fraud detection rate on test set '
