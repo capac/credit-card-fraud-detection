@@ -48,7 +48,9 @@ fig, axes = plt.subplot_mosaic(
     [['1.', '3.'],
      ['1.', '3.'],
      ['1.', '4.'],
-     ['2.', '4.']], figsize=(10, 9)
+     ['1.', '4.'],
+     ['2.', '5.'],
+     ['2.', '5.']], figsize=(10, 9)
      )
 
 # transactions per account
@@ -86,8 +88,21 @@ plt.xticks(rotation=45)
 plt.ylabel('Number of frauds')
 plt.title('Frauds per month')
 
-# fraud amount per account
+# non-fraudulent and fraudulent cases
 plt.axes(axes['3.'])
+plt.bar(
+    ['Normal', 'Fraudulent'],
+    [(data_df.fraudCase == 0).sum(), (data_df.fraudCase == 1).sum()],
+    width=0.4, color=plt.cm.Paired.colors, label=['Normal', 'Fraudulent']
+    )
+plt.xticks([0, 1], ['Normal', 'Fraudulent'])
+plt.ylabel('Number of transactions')
+plt.title('Number of fraudulent cases')
+plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.0f}"))
+plt.legend(loc='upper right')
+
+# fraud amount per account
+plt.axes(axes['4.'])
 fraud_df = data_df.loc[data_df.fraudCase == 1]
 fraud_amount_per_account = (
     fraud_df.groupby('accountNumber')
@@ -100,7 +115,7 @@ plt.ylabel('Number of accounts')
 plt.xlim([-400, 8500])
 
 # number of frauds per account
-plt.axes(axes['4.'])
+plt.axes(axes['5.'])
 num_frauds_per_account = (
     fraud_df.groupby('accountNumber')
     ['transactionAmount'].count()
