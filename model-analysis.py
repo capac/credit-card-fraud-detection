@@ -77,11 +77,6 @@ y_test = y[len(y)-2*len_monthly_data_set:]
 X_train = X_train_full[:len(X_train_full)-2*len_monthly_data_set]
 y_train = y_train_full[:len(y_train_full)-2*len_monthly_data_set]
 
-# validation set: 9th and 10th month
-X_val = X_train_full[len(X_train_full)-2*len_monthly_data_set:]
-y_val = y_train_full[len(y_train_full)-2*len_monthly_data_set:]
-
-
 # first test month
 X_test_1 = X_test[:len_monthly_data_set]
 y_test_1 = y_test[:len_monthly_data_set]
@@ -89,12 +84,11 @@ y_test_1 = y_test[:len_monthly_data_set]
 X_test_2 = X_test[len_monthly_data_set:]
 y_test_2 = y_test[len_monthly_data_set:]
 
-print(f'Length of full training set (first 10 months): {len(X_train_full)}')
-print(f'Length of full testing set (last 2 months): {len(X_test)}')
-print(f'Length of training set (first 8 months): {len(X_train)}')
-print(f'Length of 1st validation set (9th & 10th months): {len(X_val)}')
-print(f'len(X_train)+len(X_val)+len(X_test) == len(X): '
-      f'{len(X_train)+len(X_val)+len(X_test) == len(X)}\n')
+print('Model pipeline uses random under sampler and random '
+      'forest classifier.\n')
+print('Training set comes from the first 10 months of data, validation '
+      'sets from the 9th\nand 10th months, and test sets come from '
+      'the 11th and 12th month respectively.\n')
 
 pipeline = make_pipeline(
     RandomUnderSampler(random_state=0),
@@ -123,9 +117,14 @@ class ModelOverRandomDetection():
         self.num_bootstrapped_cases = num_bootstrapped_cases
         self.percent_frauds_control = []
 
+        # check about class index using 'classes_' attribute
+        clf = self.pipeline.named_steps['randomforestclassifier']
+        fraud_class_idx = list(clf.classes_).index(1)
+        # print(f'fraud_class_idx: {fraud_class_idx}')
+        y_score = self.pipeline.predict_proba(self.X_test)[:, fraud_class_idx]
+
         # test set
-        y_score = self.pipeline.predict_proba(self.X_test)[:, 1]
-        sorted_indexes = np.argsort(y_score)
+        sorted_indexes = np.argsort(y_score, stable=True)
         selected_indexes = sorted_indexes[-self.num_transaction_checks:]
         y_sel = self.y_test.iloc[selected_indexes]
         # print(f'len(y_sel): {len(y_sel)}')
@@ -188,6 +187,8 @@ print(f'Random detection rate average: '
 X_train_tts, X_test_tts, y_train_tts, y_test_tts = train_test_split(
     X, y, test_size=0.2, stratify=y, random_state=0
     )
+print('Training and testing data set from '
+      'complete, shuffled and stratified data set.\n')
 
 
 class CrossValidationCheck():

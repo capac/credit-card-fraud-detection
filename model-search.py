@@ -6,21 +6,14 @@ import pandas as pd
 import numpy as np
 from imblearn.pipeline import make_pipeline
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.base import clone
 from sklearn.ensemble import (
     RandomForestClassifier,
     HistGradientBoostingClassifier,
     )
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    balanced_accuracy_score,
-    recall_score
-    )
-from sklearn.model_selection import (
-    train_test_split,
-    cross_validate,
-    )
+from sklearn.metrics import balanced_accuracy_score
+from sklearn.model_selection import cross_validate
 from sklearn.tree import DecisionTreeClassifier
 
 
@@ -89,7 +82,6 @@ y_train = y_train_full[:len(y_train_full)-2*len_monthly_data_set]
 X_val = X_train_full[len(X_train_full)-2*len_monthly_data_set:]
 y_val = y_train_full[len(y_train_full)-2*len_monthly_data_set:]
 
-
 # first test month
 X_test_1 = X_test[:len_monthly_data_set]
 y_test_1 = y_test[:len_monthly_data_set]
@@ -100,8 +92,8 @@ y_test_2 = y_test[len_monthly_data_set:]
 print(f'Length of full training set (first 10 months): {len(X_train_full)}')
 print(f'Length of full testing set (last 2 months): {len(X_test)}')
 print(f'Length of training set (first 8 months): {len(X_train)}')
-print(f'Length of 1st validation set (9th & 10th months): {len(X_val)}')
-print(f'len(X_train)+len(X_val)+len(X_test) == len(X): '
+print(f'Length of validation set (9th & 10th months): {len(X_val)}')
+print(f'len(X_train) + len(X_val) + len(X_test) == len(X): '
       f'{len(X_train)+len(X_val)+len(X_test) == len(X)}\n')
 
 model_dict = {
@@ -159,137 +151,4 @@ class DataSetEvaluation():
 
 
 validation_eval = DataSetEvaluation(X_train, X_val, y_train, y_val)
-# validation_eval.cv_evaluate()
-
-pipeline = make_pipeline(
-    RandomUnderSampler(random_state=0),
-    RandomForestClassifier(
-        max_depth=8, n_estimators=200, n_jobs=-1,
-        random_state=0, bootstrap=True,
-        )
-    )
-pipeline.fit(X_train, y_train)
-
-
-class ModelOverRandomDetection():
-    '''
-    Checks performance of fraud detection in model over random-transaction
-    selection. The number of bootstrapped cases and the number of transaction
-    checks can be changed for each instance of the class in the 'eval' method.
-    '''
-
-    def __init__(self, X_test, y_test, pipeline):
-        self.X_test = X_test
-        self.y_test = y_test
-        self.pipeline = pipeline
-
-    def eval(self, num_bootstrapped_cases=30, num_transaction_checks=400):
-        self.num_transaction_checks = num_transaction_checks
-        self.num_bootstrapped_cases = num_bootstrapped_cases
-        self.percent_frauds_control = []
-
-        # test set
-        y_score = self.pipeline.predict_proba(self.X_test)[:, 1]
-        sorted_indexes = np.argsort(y_score)
-        selected_indexes = sorted_indexes[-self.num_transaction_checks:]
-        y_sel = self.y_test.iloc[selected_indexes]
-        # print(f'len(y_sel): {len(y_sel)}')
-        # print(f'sum(y_sel): {sum(y_sel)}')
-        # print(f'len(self.y_test): {len(self.y_test)}')
-        # print(f'sum(self.y_test): {sum(self.y_test)}')
-        self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_test)
-        print(f'Model fraud detection rate on test set '
-              f'using the 400 most-likely detections: '
-              f'{np.round(self.percent_frauds, 2)}%')
-        y_threshold = np.sort(y_score)[-self.num_transaction_checks]
-        y_pred = (y_score >= y_threshold).astype(int)
-        mdl_ba_score = balanced_accuracy_score(self.y_test, y_pred)
-        print(f'Balanced accuracy score on test set: '
-              f'{np.round(100*mdl_ba_score, 2)}%')
-        recall = recall_score(self.y_test, y_pred, pos_label=1)
-        print(f'Recall score on test set: '
-              f'{np.round(100*recall, 2)}%')
-
-        # control on random selection
-        for n_tests in range(self.num_bootstrapped_cases):
-            rng = np.random.RandomState(seed=n_tests)
-            shuffled_index = rng.permutation(np.arange(0, len(self.y_test)))
-            selected_indexes = shuffled_index[:num_transaction_checks]
-            y_sel = self.y_test.iloc[selected_indexes]
-            sens = 100*np.sum(y_sel)/np.sum(self.y_test)
-            self.percent_frauds_control.append(sens)
-
-        self.percent_frauds_control_mean = np.mean(self.percent_frauds_control)
-        print(f'Average random fraud detection rate on '
-              f'{self.num_bootstrapped_cases} bootstrapped test sets: '
-              f'{np.round(self.percent_frauds_control_mean, 2)}%')
-
-        imp_ratio = self.percent_frauds/self.percent_frauds_control_mean
-        print(f'Improvement of model detection over average random detection '
-              f'on test set: '
-              f'{np.round(imp_ratio, 1)}x\n')
-
-
-test_1_eval = ModelOverRandomDetection(X_test_1, y_test_1, pipeline)
-test_1_eval.eval()
-
-test_2_eval = ModelOverRandomDetection(X_test_2, y_test_2, pipeline)
-test_2_eval.eval()
-
-print(f'Model detection rate average: '
-      f'{np.round(np.mean(
-          [test_1_eval.percent_frauds,
-           test_2_eval.percent_frauds]
-           ), 2)}')
-
-print(f'Random detection rate average: '
-      f'{np.round(np.mean(
-          [test_1_eval.percent_frauds_control_mean,
-           test_2_eval.percent_frauds_control_mean]
-           ), 2)}\n')
-
-X_train_tts, X_test_tts, y_train_tts, y_test_tts = train_test_split(
-    X, y, test_size=0.2, stratify=y, random_state=0
-    )
-
-
-class CrossValidationCheck():
-    def __init__(self, X_train, X_val, y_train, y_val):
-        self.X_train = X_train
-        self.X_val = X_val
-        self.y_train = y_train
-        self.y_val = y_val
-
-    def cv_eval(self, model, num_transaction_checks=400):
-        self.model = clone(model)
-        self.num_transaction_checks = num_transaction_checks
-
-        pipeline = make_pipeline(
-            RandomUnderSampler(random_state=0),
-            self.model,
-            )
-        pipeline.fit(self.X_train, self.y_train)
-
-        # test set
-        y_score = pipeline.predict_proba(self.X_val)[:, 1]
-        sorted_indexes = np.argsort(y_score)
-        selected_indexes = sorted_indexes[-self.num_transaction_checks:]
-        y_sel = self.y_val.iloc[selected_indexes]
-        self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_val)
-
-        print(f'Model fraud detection rate on test set '
-              f'using the 400 most-likely detections: '
-              f'{np.round(self.percent_frauds, 2)}%')
-
-        y_threshold = np.sort(y_score)[-self.num_transaction_checks]
-        y_pred = (y_score >= y_threshold).astype(int)
-        mdl_ba_score = balanced_accuracy_score(self.y_val, y_pred)
-        print(f'Balanced accuracy score on test set: '
-              f'{np.round(100*mdl_ba_score, 2)}%')
-        recall = recall_score(self.y_val, y_pred, pos_label=1)
-        print(f'Recall score on test set: '
-              f'{np.round(100*recall, 2)}%')
-
-
-cvc = CrossValidationCheck(X_train_tts, X_test_tts, y_train_tts, y_test_tts)
-cvc.cv_eval(model_dict['random forest'])
+validation_eval.cv_evaluate()

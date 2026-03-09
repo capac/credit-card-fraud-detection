@@ -65,7 +65,7 @@ labels_df['eventId'] = labels_df['eventId'].astype('string')
 
 print(f'Number of unique entries in labels dataset:\n{labels_df.nunique()}\n')
 
-data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId).astype(int)
+data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId)
 
 neg, pos = np.bincount(data_df['fraudCase'])
 total = neg + pos
