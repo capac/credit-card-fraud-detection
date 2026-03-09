@@ -63,43 +63,43 @@ for i in range(30):
     acc = acc_with_frauds[i]
     fraud = data_df['fraudCase'].loc[data_df['accountNumber'] == acc]
     xx = data_df['transactionTime'].loc[data_df['accountNumber'] == acc]
-    plt.scatter(
+    axes['1.'].scatter(
         xx, np.ones(len(xx))*i, marker='o',
         color=cmap[0], alpha=0.3,
         )
-    plt.scatter(
+    axes['1.'].scatter(
         xx[fraud == 1], np.ones(len(xx[fraud == 1]))*i,
         color=cmap[1], alpha=0.6,
         )
 
 plt.xticks(rotation=45)
-plt.xlabel('Time')
-plt.ylabel('Accounts')
-plt.title('Transactions per account')
+axes['1.'].set_xlabel('Time')
+axes['1.'].set_ylabel('Accounts')
+axes['1.'].set_title('Transactions per account')
 
 # frauds per month
 plt.axes(axes['2.'])
-plt.hist(
+axes['2.'].hist(
     data_df['transactionTime'].loc[data_df['fraudCase'] == 1],
     bins=12, color=cmap[1]
     )
-plt.xlabel('Time')
 plt.xticks(rotation=45)
-plt.ylabel('Number of frauds')
-plt.title('Frauds per month')
+axes['2.'].set_xlabel('Time')
+axes['2.'].set_ylabel('Number of frauds')
+axes['2.'].set_title('Frauds per month')
 
 # non-fraudulent and fraudulent cases
 plt.axes(axes['3.'])
-plt.bar(
+axes['3.'].bar(
     ['Normal', 'Fraudulent'],
     [(data_df.fraudCase == 0).sum(), (data_df.fraudCase == 1).sum()],
     width=0.4, color=plt.cm.Paired.colors, label=['Normal', 'Fraudulent']
     )
-plt.xticks([0, 1], ['Normal', 'Fraudulent'])
-plt.ylabel('Number of transactions')
-plt.title('Number of fraudulent cases')
 plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.0f}"))
-plt.legend(loc='upper right')
+axes['3.'].set_xticks([0, 1], ['Normal', 'Fraudulent'])
+axes['3.'].set_ylabel('Number of transactions')
+axes['3.'].set_title('Number of fraudulent cases')
+axes['3.'].legend(loc='upper right')
 
 # fraud amount per account
 plt.axes(axes['4.'])
@@ -108,11 +108,11 @@ fraud_amount_per_account = (
     fraud_df.groupby('accountNumber')
     ['transactionAmount'].sum()
     )
-plt.hist(fraud_amount_per_account, bins=np.arange(0, 10000, 500))
-plt.title('Fraud amount per account (GBP)')
-plt.xlabel('Fraud amount (GBP)')
-plt.ylabel('Number of accounts')
-plt.xlim([-400, 8500])
+axes['4.'].hist(fraud_amount_per_account, bins=np.arange(0, 10000, 500))
+axes['4.'].set_title('Number of fraud amount per account')
+axes['4.'].set_xlabel('Fraud amount (GBP)')
+axes['4.'].set_ylabel('Number of accounts')
+axes['4.'].set_xlim([-400, 8500])
 
 # number of frauds per account
 plt.axes(axes['5.'])
@@ -120,11 +120,11 @@ num_frauds_per_account = (
     fraud_df.groupby('accountNumber')
     ['transactionAmount'].count()
     )
-plt.hist(num_frauds_per_account, bins=np.arange(0, 100, 5))
-plt.title('Number of frauds per account')
-plt.xlabel('Number of frauds')
-plt.ylabel('Number of accounts')
-plt.xlim([-4, 85])
+axes['5.'].hist(num_frauds_per_account, bins=np.arange(0, 100, 5))
+axes['5.'].set_title('Number of frauds per account')
+axes['5.'].set_xlabel('Number of frauds')
+axes['5.'].set_ylabel('Number of accounts')
+axes['5.'].set_xlim([-4, 85])
 
 plt.tight_layout()
 plot_filename = plot_dir / 'time_amount_number_fraud_transactions.png'
