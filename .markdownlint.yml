@@ -1,0 +1,3 @@
+MD013: false  # Don't set limit to line length in Markdown files
+MD033: false  # Allow inline HTML (e.g., <div>, <br>) inside Markdown files
+MD060: false
