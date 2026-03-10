@@ -16,7 +16,6 @@ from sklearn.metrics import balanced_accuracy_score
 from sklearn.model_selection import cross_validate
 from sklearn.tree import DecisionTreeClassifier
 
-
 home = Path.home()
 data_path = home / 'Programming/data/fraud-detection/data'
 data_df = pd.read_csv(
@@ -30,8 +29,8 @@ labels_df = pd.read_csv(
     )
 labels_df.sort_values(by='reportedTime', inplace=True)
 
-# turned some category types represented by integrals such as 'mcc'
-# 'merchantCountry' and 'posEntryMode' to strings
+# turned some category types represented by integrals such
+# as 'mcc', 'merchantCountry' and 'posEntryMode' to strings
 category_list = [
     'eventId', 'accountNumber', 'merchantId', 'mcc',
     'merchantCountry', 'merchantZip', 'posEntryMode'
@@ -62,8 +61,8 @@ feature_names_list = dv.get_feature_names_out(selected_list)
 
 processed_df = pd.DataFrame(dicts_arr, columns=feature_names_list)
 
-y = data_df['fraudCase']
-X = processed_df
+y = data_df['fraudCase'].copy()
+X = processed_df.copy()
 
 # training set: first 10 months
 len_monthly_data_set = int(X.shape[0]/12)
