@@ -13,7 +13,7 @@ work_dir = home / (
     'Programming/Python/machine-learning-exercises/credit-card-fraud-detection'
     )
 
-# output direcotry for plots
+# output directory for plots
 plot_dir = work_dir / 'plots'
 plot_dir.mkdir(exist_ok=True, parents=True)
 
@@ -27,8 +27,8 @@ data_df.sort_values(by='transactionTime', inplace=True)
 mplstyle_file = work_dir / 'barplot-style.mplstyle'
 plt.style.use(mplstyle_file)
 
-# turned some category types represented by integrals such as 'mcc'
-# 'merchantCountry' and 'posEntryMode' to strings
+# turned some category types represented by integrals such
+# as 'mcc', 'merchantCountry' and 'posEntryMode' to strings
 category_list = [
     'eventId', 'accountNumber', 'merchantId', 'mcc',
     'merchantCountry', 'merchantZip', 'posEntryMode'
@@ -41,9 +41,10 @@ labels_df = pd.read_csv(
 labels_df.sort_values(by='reportedTime', inplace=True)
 data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId).astype(int)
 
+# colormap
+cmap = plt.cm.Paired.colors
 
 # first plot
-cmap = plt.cm.Paired.colors
 fig, axes = plt.subplot_mosaic(
     [['1.', '3.'],
      ['1.', '3.'],
