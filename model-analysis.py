@@ -37,7 +37,13 @@ category_list = [
     ]
 data_df[category_list] = data_df[category_list].astype('string')
 labels_df['eventId'] = labels_df['eventId'].astype('string')
-data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId)
+# data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId)
+
+data_df = data_df.merge(labels_df, on='eventId', how='left')
+data_df['fraudCase'] = data_df['reportedTime'].apply(
+    lambda x: 0 if pd.isnull(x) else 1
+    )
+data_df['fraudCase'] = data_df['fraudCase'].astype(bool)
 data_df['merchantZip'] = data_df['merchantZip'].replace(
     {np.nan: 'Unknown', '0': 'Unknown'}
     )
@@ -120,7 +126,7 @@ class ModelOverRandomDetection():
         # check about class index using 'classes_' attribute
         clf = self.pipeline.named_steps['randomforestclassifier']
         fraud_class_idx = list(clf.classes_).index(np.int64(1))
-        # print(f'fraud_class_idx: {fraud_class_idx}')
+        print(f'fraud_class_idx: {fraud_class_idx}')
         y_score = self.pipeline.predict_proba(self.X_test)[:, fraud_class_idx]
 
         # test set
@@ -128,9 +134,9 @@ class ModelOverRandomDetection():
         selected_indexes = sorted_indexes[-self.num_transaction_checks:]
         y_sel = self.y_test.iloc[selected_indexes]
         # print(f'len(y_sel): {len(y_sel)}')
-        # print(f'sum(y_sel): {sum(y_sel)}')
+        print(f'sum(y_sel): {sum(y_sel)}')
         # print(f'len(self.y_test): {len(self.y_test)}')
-        # print(f'sum(self.y_test): {sum(self.y_test)}')
+        print(f'sum(self.y_test): {sum(self.y_test)}')
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_test)
         print(f'Model fraud detection rate on test set '
               f'using the 400 most-likely detections: '
