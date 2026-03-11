@@ -17,6 +17,7 @@ The exploratory data analysis plot in Figure 1 shows some interesting observatio
 ![time_amount_number_fraud_transactions](plots/time_amount_number_fraud_transactions.png)
 
 <figcaption>Figure 1 &ndash; Transactions per account, frauds per month, number of fraudulent cases, number of fraud amount per account and number of frauds per account.</figcaption>
+<p></p>
 
 | Description                                          | Value                    |
 |------------------------------------------------------|--------------------------|
@@ -30,6 +31,7 @@ The exploratory data analysis plot in Figure 1 shows some interesting observatio
 | Percentage of accounts with less than £1000 of fraud | 83.23%                   |
 
 <figcaption>Table 1 &ndash; Summary statistics for the data set.</figcaption>
+<p></p>
 
 The data set consists of card payment transactions from January 1, 2017 to January 3, 2018. It contains 118621 transactions of which 117746 are non-fraudulent (99.26% of total) and 875 are fraudulent (0.74% of total). The total number of accounts in the data set are 766, of which those subject to fraud are 167. Even though the percentage of fraud per transaction is small, fraud cases affect 21.8% of accounts. The percentage of accounts with less than £1000 of fraud is 83.23%.
 
@@ -45,12 +47,14 @@ I used the [`RandomUnderSampler`](https://imbalanced-learn.org/stable/references
 | Histogram gradient boosting        | 0.835 ± 0.08        | 0.812 ± 0.02          |
 
 <figcaption>Table 2 &ndash; Balanced accuracy scores for four classifiers.</figcaption>
+<p></p>
 
 The result of undersampling the majority case and using the random forest classifier can be observed in the [receiver operating characteristic](https://en.wikipedia.org/wiki/Receiver_operating_characteristic "https://en.wikipedia.org/wiki/Receiver_operating_characteristic") curve in Figure 2. The curve tends to the upper left-hand corner of the plot and a high value of 0.9088 proves the performance of this particular classifier.
 
 ![auc_plot](plots/auc_plot.png)
 
 <figcaption>Figure 2 &ndash; Receiver operating characteristic (ROC) curve for random forest classifier.</figcaption>
+<p></p>
 
 The random forest classifier was then tested against two left-out data sets, each containing one month's worth of unseen data, corresponding in the original data set to the 9th and 10th months of data. The [recall](https://en.wikipedia.org/wiki/Precision_and_recall "https://en.wikipedia.org/wiki/Precision_and_recall") score shows the model's ability to detect fraudulent payment transactions.
 
@@ -62,6 +66,7 @@ The random forest classifier was then tested against two left-out data sets, eac
 | Improvement of model detection over average random detection    | 5.4x   |
 
 <figcaption>Table 3 &ndash; Results from first left-out data set.</figcaption>
+<p></p>
 
 | Description                                                     | Value  |
 |-----------------------------------------------------------------|--------|
@@ -71,6 +76,7 @@ The random forest classifier was then tested against two left-out data sets, eac
 |Improvement of model detection over average random detection     | 6.2x   |
 
 <figcaption>Table 4 &ndash; Results from second left-out data set.</figcaption>
+<p></p>
 
 | Description                  | Value  |
 |------------------------------|--------|
@@ -79,3 +85,4 @@ The random forest classifier was then tested against two left-out data sets, eac
 |Average improvement           | 5.66   |
 
 <figcaption>Table 5 &ndash; Average improvement of model detection over random selection.</figcaption>
+<p></p>
