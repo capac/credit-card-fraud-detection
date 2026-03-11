@@ -18,10 +18,9 @@ data_df.sort_values(by='transactionTime', inplace=True)
 labels_df = pd.read_csv(
     data_path / 'labels_obf.csv', parse_dates=['reportedTime']
     )
-labels_df.sort_values(by='reportedTime', inplace=True)
 
-# turned some category types represented by integrals such as 'mcc'
-# 'merchantCountry' and 'posEntryMode' to strings
+# turned some category types represented by integrals such
+# as 'mcc', 'merchantCountry' and 'posEntryMode' to strings
 category_list = [
     'eventId', 'accountNumber', 'merchantId', 'mcc',
     'merchantCountry', 'merchantZip', 'posEntryMode'
@@ -65,7 +64,12 @@ labels_df['eventId'] = labels_df['eventId'].astype('string')
 
 print(f'Number of unique entries in labels dataset:\n{labels_df.nunique()}\n')
 
-data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId)
+# data_df['fraudCase'] = data_df.eventId.isin(labels_df.eventId)
+data_df = data_df.merge(labels_df, on='eventId', how='left')
+data_df['fraudCase'] = data_df['reportedTime'].apply(
+    lambda x: 0 if pd.isnull(x) else 1
+    )
+data_df['fraudCase'] = data_df['fraudCase'].astype(bool)
 
 neg, pos = np.bincount(data_df['fraudCase'])
 total = neg + pos
