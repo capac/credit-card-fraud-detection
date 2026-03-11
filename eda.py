@@ -176,7 +176,6 @@ ax.bar(pos_fraud_df.index, pos_fraud_df.values,
 ax.set_xlabel('POS entry mode')
 ax.set_ylabel('Number')
 ax.set_title('Number of POS entry modes for fraudulent cases')
-plt.legend()
 plt.tight_layout()
 plot_filename = plot_dir / 'number_pos_entry.png'
 plt.savefig(plot_filename, dpi=288, bbox_inches='tight')
@@ -193,7 +192,6 @@ plt.setp(ax.get_xticklabels(), rotation_mode='anchor', rotation=45, ha='right')
 ax.set_xlabel('Merchant category code')
 ax.set_ylabel('Number')
 ax.set_title(f'Top {top_num} merchant category code for fraudulent cases')
-plt.legend()
 plt.tight_layout()
 plot_filename = plot_dir / 'merchant_cat_code_fraud.png'
 plt.savefig(plot_filename, dpi=288, bbox_inches='tight')
@@ -211,7 +209,6 @@ ax.bar(mctry_fraud_df.index, mctry_fraud_df.values,
 ax.set_xlabel('Merchant category country')
 ax.set_ylabel('Number')
 ax.set_title(f'Top {top_num} merchant category country for fraudulent cases')
-plt.legend()
 plt.tight_layout()
 plot_filename = plot_dir / 'merchant_cat_country_fraud.png'
 plt.savefig(plot_filename, dpi=288, bbox_inches='tight')
@@ -237,8 +234,6 @@ fig.text(x=0.08, y=-0.01,
          "were removed.",
          transform=fig.transFigure,
          ha='left', fontsize=8, alpha=0.7)
-
-plt.legend()
 plt.tight_layout()
 plot_filename = plot_dir / 'merchant_zip_codes_fraud.png'
 plt.savefig(plot_filename, dpi=288, bbox_inches='tight')
@@ -257,7 +252,6 @@ ax.set_ylabel('Number of frauds')
 ax.set_title(f'Top {top_num} account numbers with fraudulent cases')
 plt.setp(ax.get_xticklabels(), ha='right',
          rotation_mode='anchor', rotation=45)
-plt.legend()
 plt.tight_layout()
 plot_filename = plot_dir / 'account_numbers_fraud.png'
 plt.savefig(plot_filename, dpi=288, bbox_inches='tight')
