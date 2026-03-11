@@ -11,7 +11,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.metrics import (
     balanced_accuracy_score,
-    recall_score
+    recall_score,
+    precision_score
     )
 from sklearn.model_selection import train_test_split
 
@@ -43,7 +44,7 @@ data_df = data_df.merge(labels_df, on='eventId', how='left')
 data_df['fraudCase'] = data_df['reportedTime'].apply(
     lambda x: 0 if pd.isnull(x) else 1
     )
-data_df['fraudCase'] = data_df['fraudCase'].astype(bool)
+# data_df['fraudCase'] = data_df['fraudCase'].astype(bool)
 data_df['merchantZip'] = data_df['merchantZip'].replace(
     {np.nan: 'Unknown', '0': 'Unknown'}
     )
@@ -146,6 +147,9 @@ class ModelOverRandomDetection():
         mdl_ba_score = balanced_accuracy_score(self.y_test, y_pred)
         print(f'Balanced accuracy score on test set: '
               f'{np.round(100*mdl_ba_score, 2)}%')
+        precision = precision_score(self.y_test, y_pred, pos_label=1)
+        print(f'Precision score on test set: '
+              f'{np.round(100*precision, 2)}%')
         recall = recall_score(self.y_test, y_pred, pos_label=1)
         print(f'Recall score on test set: '
               f'{np.round(100*recall, 2)}%')
@@ -227,6 +231,9 @@ class CrossValidationCheck():
         mdl_ba_score = balanced_accuracy_score(self.y_val, y_pred)
         print(f'Balanced accuracy score on test set: '
               f'{np.round(100*mdl_ba_score, 2)}%')
+        precision = precision_score(self.y_val, y_pred, pos_label=1)
+        print(f'Precision score on test set: '
+              f'{np.round(100*precision, 2)}%')
         recall = recall_score(self.y_val, y_pred, pos_label=1)
         print(f'Recall score on test set: '
               f'{np.round(100*recall, 2)}%')
