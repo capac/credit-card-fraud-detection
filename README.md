@@ -12,7 +12,7 @@ In the analysis I decided to convert `eventId`, `accountNumber`, `merchantId`, `
 
 ## Exploratory data analysis
 
-The exploratory data analysis plot shows some interesting observations. Some of these observations are summarized in Table 1.
+The exploratory data analysis plot in Figure 1 shows some interesting observations, such as that many frauds occur in the summer months. Some of the observations are summarized in Table 1.
 
 ![time_amount_number_fraud_transactions](plots/time_amount_number_fraud_transactions.png)
 
@@ -31,11 +31,11 @@ The exploratory data analysis plot shows some interesting observations. Some of 
 
 <figcaption>Table 1 &ndash; Summary statistics for the data set.</figcaption>
 
-The data set contains 118621 transactions of which 117746 are non-fraudulent transactions (99.26% of total) and 875 are fraudulent transactions (0.74% of total). The total number of accounts are 766, of which those subject to fraud are 167. Even though the percentage of fraud per transaction is small, fraud cases affect 21.8% of accounts. The percentage of accounts with less than £1000 of fraud is 83.23%.
+The data set consists of card payment transactions from January 1, 2017 to January 3, 2018. It contains 118621 transactions of which 117746 are non-fraudulent (99.26% of total) and 875 are fraudulent (0.74% of total). The total number of accounts in the data set are 766, of which those subject to fraud are 167. Even though the percentage of fraud per transaction is small, fraud cases affect 21.8% of accounts. The percentage of accounts with less than £1000 of fraud is 83.23%.
 
 ## Modeling
 
-I used the [`RandomUnderSampler`](https://imbalanced-learn.org/stable/references/generated/imblearn.under_sampling.RandomUnderSampler.html "https://imbalanced-learn.org/stable/references/generated/imblearn.under_sampling.RandomUnderSampler.html") class from [imbalanced-learn](https://imbalanced-learn.org/stable/index.html "https://imbalanced-learn.org/stable/index.html") to under-sample the majority class. Since in my data set 875 cases are fraudulent, the imbalanced-learn class randomly selects without replacement 875 non-fraud cases to generate a balanced data set. I used the the balanced data set over ten month's worth of data to build four, simple machine learning classifiers: logistic regression, decision tree, random forest and histogram gradient boosting. Of all four the random forest obtained the best balanced accuracy mean and standard deviation, from 5-fold cross validation, at 0.819 ± 0.009 on the **unbalanced** test data set. The [balanced accuracy score](https://en.wikipedia.org/wiki/Sensitivity_and_specificity "https://en.wikipedia.org/wiki/Sensitivity_and_specificity") is defined as the mean of the recall of the two target classes.
+I used the [`RandomUnderSampler`](https://imbalanced-learn.org/stable/references/generated/imblearn.under_sampling.RandomUnderSampler.html "https://imbalanced-learn.org/stable/references/generated/imblearn.under_sampling.RandomUnderSampler.html") class from [imbalanced-learn](https://imbalanced-learn.org/stable/index.html "https://imbalanced-learn.org/stable/index.html") to under-sample the majority class. Since in my data set 875 cases are fraudulent, the imbalanced-learn class randomly selects without replacement 875 non-fraud cases to generate a balanced data set. I used the the balanced data set over ten month's worth of data to learn four, simple machine learning classifiers: logistic regression, decision tree, random forest and histogram gradient boosting. Of all four the random forest obtained the best balanced accuracy mean and standard deviation, from 5-fold cross validation, at 0.819 ± 0.009 on the **unbalanced** test data set. The [balanced accuracy score](https://en.wikipedia.org/wiki/Sensitivity_and_specificity "https://en.wikipedia.org/wiki/Sensitivity_and_specificity") is defined as the mean of the recall of the two target classes.
 
 | Balanced accuracy ($\mu ± \sigma$) | Training set values | Validation set values |
 |------------------------------------|---------------------|-----------------------|
@@ -46,13 +46,18 @@ I used the [`RandomUnderSampler`](https://imbalanced-learn.org/stable/references
 
 <figcaption>Table 2 &ndash; Balanced accuracy scores for four classifiers.</figcaption>
 
-The random forest classifier was then tested against two left-out data sets, each containing one month's worth of unseen data, corresponding in the original data set to the 9th and 10th months of data.
+The result of undersampling the majority case and using the random forest classifier can be observed in the [receiver operating characteristic](https://en.wikipedia.org/wiki/Receiver_operating_characteristic "https://en.wikipedia.org/wiki/Receiver_operating_characteristic") curve in Figure 2. The curve tends to the upper left-hand corner of the plot and a high value of 0.9088 proves the performance of this particular classifier.
+
+![auc_plot](plots/auc_plot.png)
+
+<figcaption>Figure 2 &ndash; Receiver operating characteristic (ROC) curve for random forest classifier.</figcaption>
+
+The random forest classifier was then tested against two left-out data sets, each containing one month's worth of unseen data, corresponding in the original data set to the 9th and 10th months of data. The [recall](https://en.wikipedia.org/wiki/Precision_and_recall "https://en.wikipedia.org/wiki/Precision_and_recall") score shows the model's ability to detect fraudulent payment transactions.
 
 | Description                                                     | Value  |
 |-----------------------------------------------------------------|--------|
-| Model fraud detection rate using the 400 most-likely detections | 27.78% |
+| Recall score using the 400 most-likely detections               | 27.78% |
 | Balanced accuracy score                                         | 61.92% |
-| Recall score                                                    | 27.78% |
 | Average random fraud detection rate on 30 bootstrapped sets     | 5.19%  |
 | Improvement of model detection over average random detection    | 5.4x   |
 
@@ -60,9 +65,8 @@ The random forest classifier was then tested against two left-out data sets, eac
 
 | Description                                                     | Value  |
 |-----------------------------------------------------------------|--------|
-|Model fraud detection rate using the 400 most-likely detections  | 20.0%  |
+|Recall score using the 400 most-likely detections                | 20.0%  |
 |Balanced accuracy score                                          | 58.01% |
-|Recall score                                                     | 20.0%  |
 |Average random fraud detection rate on 30 bootstrapped sets      | 3.25%  |
 |Improvement of model detection over average random detection     | 6.2x   |
 
@@ -72,11 +76,6 @@ The random forest classifier was then tested against two left-out data sets, eac
 |------------------------------|--------|
 |Model detection rate average  | 23.89  |
 |Random detection rate average | 4.22   |
+|Average improvement           | 5.66   |
 
 <figcaption>Table 5 &ndash; Average improvement of model detection over random selection.</figcaption>
-
-The result of undersampling the majority case and using the random forest classifier can be observed in the [receiver operating characteristic](https://en.wikipedia.org/wiki/Receiver_operating_characteristic "https://en.wikipedia.org/wiki/Receiver_operating_characteristic") curve in Figure 2. The curve tends to the upper left-hand corner of the plot and a high value of 0.9088 proves the performance of this particular classifier.
-
-![auc_plot](plots/auc_plot.png)
-
-<figcaption>Figure 2 &ndash; Receiver operating characteristic (ROC) curve for random forest classifier.</figcaption>
