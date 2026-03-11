@@ -74,8 +74,8 @@ The random forest classifier was then tested against two left-out data sets, eac
 
 | Description                  | Value  |
 |------------------------------|--------|
-|Model detection rate average  | 23.89  |
-|Random detection rate average | 4.22   |
+|Recall average                | 23.89% |
+|Random detection rate average | 4.22%  |
 |Average improvement           | 5.66   |
 
 <figcaption>Table 5 &ndash; Average improvement of model detection over random selection.</figcaption>
