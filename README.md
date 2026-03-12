@@ -62,8 +62,9 @@ The random forest classifier was then tested against two left-out data sets, eac
 |-----------------------------------------------------------------|--------|
 | Recall score using the 400 most-likely detections               | 27.78% |
 | Balanced accuracy score                                         | 61.92% |
-| Average random fraud detection rate on 30 bootstrapped sets     | 5.19%  |
-| Improvement of model detection over average random detection    | 5.4x   |
+| Precision score                                                 | 3.73%  |
+| Average random fraud detection rate on 30 bootstrapped sets     | 4.07%  |
+| Improvement of model detection over average random detection    | 6.8x   |
 
 <figcaption>Table 3 &ndash; Results from first left-out data set.</figcaption>
 <p></p>
@@ -72,8 +73,9 @@ The random forest classifier was then tested against two left-out data sets, eac
 |-----------------------------------------------------------------|--------|
 |Recall score using the 400 most-likely detections                | 20.0%  |
 |Balanced accuracy score                                          | 58.01% |
-|Average random fraud detection rate on 30 bootstrapped sets      | 3.25%  |
-|Improvement of model detection over average random detection     | 6.2x   |
+|Precision score                                                  | 2.0%   |
+|Average random fraud detection rate on 30 bootstrapped sets      | 3.42%  |
+|Improvement of model detection over average random detection     | 5.9x   |
 
 <figcaption>Table 4 &ndash; Results from second left-out data set.</figcaption>
 <p></p>
@@ -81,8 +83,10 @@ The random forest classifier was then tested against two left-out data sets, eac
 | Description                  | Value  |
 |------------------------------|--------|
 |Recall average                | 23.89% |
-|Random detection rate average | 4.22%  |
-|Average improvement           | 5.66   |
+|Random detection rate average | 3.75%  |
+|Average improvement           | 6.37   |
 
 <figcaption>Table 5 &ndash; Average improvement of model detection over random selection.</figcaption>
 <p></p>
+
+Considering that 400 transaction checks over the average number of transactions in a month corresponds to 4% of transactions, the bank can uncover on average almost 24% of frauds by checking only 4% of all monthly transactions.
