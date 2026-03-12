@@ -139,7 +139,8 @@ class ModelOverRandomDetection():
         # print(f'sum(self.y_test): {sum(self.y_test)}')
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_test)
         print(f'Model fraud detection rate on test set '
-              f'using the 400 most-likely detections: '
+              f'using the {self.num_transaction_checks} '
+              f'most-likely detections: '
               f'{np.round(self.percent_frauds, 2)}%')
         y_threshold = np.sort(y_score)[-self.num_transaction_checks]
         y_pred = (y_score >= y_threshold).astype(int)
@@ -154,11 +155,12 @@ class ModelOverRandomDetection():
               f'{np.round(100*recall, 2)}%')
 
         # control on random selection
-        for n_tests in range(self.num_bootstrapped_cases):
-            rng = np.random.RandomState(seed=n_tests)
-            shuffled_index = rng.permutation(np.arange(0, len(self.y_test)))
-            selected_indexes = shuffled_index[:num_transaction_checks]
-            y_sel = self.y_test.iloc[selected_indexes]
+        rng = np.random.RandomState(seed=0)
+        for _ in range(self.num_bootstrapped_cases):
+            random_indexes = rng.choice(len(self.y_test),
+                                        size=self.num_transaction_checks,
+                                        replace=False)
+            y_sel = self.y_test.iloc[random_indexes]
             sens = 100*np.sum(y_sel)/np.sum(self.y_test)
             self.percent_frauds_control.append(sens)
 
@@ -222,7 +224,8 @@ class CrossValidationCheck():
         self.percent_frauds = 100*np.sum(y_sel)/np.sum(self.y_val)
 
         print(f'Model fraud detection rate on test set '
-              f'using the 400 most-likely detections: '
+              f'using the {self.num_transaction_checks} '
+              f'most-likely detections: '
               f'{np.round(self.percent_frauds, 2)}%')
 
         y_threshold = np.sort(y_score)[-self.num_transaction_checks]
@@ -235,8 +238,13 @@ class CrossValidationCheck():
               f'{np.round(100*precision, 2)}%')
         recall = recall_score(self.y_val, y_pred, pos_label=1)
         print(f'Recall score on test set: '
-              f'{np.round(100*recall, 2)}%')
+              f'{np.round(100*recall, 2)}%\n')
 
 
 cvc = CrossValidationCheck(X_train_tts, X_test_tts, y_train_tts, y_test_tts)
 cvc.cv_eval(pipeline)
+
+percent_checks = 100*test_1_eval.num_transaction_checks/len_monthly_data_set
+print(f'Percentage of {test_1_eval.num_transaction_checks} checks '
+      f'over the average number of transactions in a month: '
+      f'{np.round(percent_checks, 1)}%')
