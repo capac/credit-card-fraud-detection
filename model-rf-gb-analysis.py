@@ -242,3 +242,8 @@ class CrossValidationCheck():
 
 cvc = CrossValidationCheck(X_train_tts, X_test_tts, y_train_tts, y_test_tts)
 cvc.cv_eval(pipeline)
+
+percent_checks = 100*test_1_eval.num_transaction_checks/len_monthly_data_set
+print(f'Percentage of {test_1_eval.num_transaction_checks} checks '
+      f'over the average number of transactions in a month: '
+      f'{np.round(percent_checks, 1)}%')
