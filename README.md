@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Fraudulent payment transactions are of very grave concern for banking institutions, due to the financial losses and customer distrust they can potentially cause. Using one year's worth of card payment transactions, with fraudulent transactions appropriately flagged, the goal of this project is to produce a machine learning model that can predict fraudulent payment transactions. Moreover, due to the limited banking capacities, only 400 transactions per month can be investigated for fraud. After model generation and bootstrap simulation, a machine learning model was found to produce a 23.9% fraud detection rate over a 4.2% fraud detection rate by random transaction selection, producing a 5.7x improvement.
+Fraudulent payment transactions are of very grave concern for banking institutions, due to the financial losses and customer distrust they can potentially cause. Using one year's worth of card payment transactions, with fraudulent transactions appropriately flagged, the goal of this project is to produce a machine learning model that can predict fraudulent payment transactions. Moreover, due to the limited banking capacities, only 400 transactions per month can be investigated for fraud. After model generation and bootstrap simulation, a machine learning model was found to produce a 23.89% fraud detection rate over a 3.75% fraud detection rate by random transaction selection, producing a 6.37x improvement. By checking just 400 transactions, corresponding to 4% of monthly transactions, the bank can uncover with the model almost 24% of frauds on average.
 
 ## Data preparation
 
